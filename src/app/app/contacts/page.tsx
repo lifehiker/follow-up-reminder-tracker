@@ -13,6 +13,7 @@ interface ContactsPageProps {
     search?: string
     status?: string
     type?: string
+    due?: string
     archived?: string
   }>
 }
@@ -22,7 +23,7 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
   if (!session?.user?.id) redirect("/signin")
 
   const params = await searchParams
-  const { search, status, type, archived } = params
+  const { search, status, type, due, archived } = params
 
   const where: Record<string, unknown> = { userId: session.user.id }
 
@@ -44,6 +45,26 @@ export default async function ContactsPage({ searchParams }: ContactsPageProps) 
       { email: { contains: search } },
       { company: { contains: search } },
     ]
+  }
+
+  if (due && due !== "ALL") {
+    const now = new Date()
+    const todayStart = new Date(now)
+    todayStart.setHours(0, 0, 0, 0)
+    const todayEnd = new Date(now)
+    todayEnd.setHours(23, 59, 59, 999)
+    const weekEnd = new Date(todayEnd)
+    weekEnd.setDate(weekEnd.getDate() + 7)
+
+    if (due === "OVERDUE") {
+      where.nextFollowUpAt = { lt: todayStart }
+    } else if (due === "TODAY") {
+      where.nextFollowUpAt = { gte: todayStart, lte: todayEnd }
+    } else if (due === "THIS_WEEK") {
+      where.nextFollowUpAt = { gt: todayEnd, lte: weekEnd }
+    } else if (due === "UNSCHEDULED") {
+      where.nextFollowUpAt = null
+    }
   }
 
   const contacts = await db.contact.findMany({

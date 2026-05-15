@@ -7,6 +7,9 @@ export const metadata: Metadata = {
 }
 
 export default function SignUpPage() {
+  const googleConfigured =
+    !!process.env.AUTH_GOOGLE_ID && !!process.env.AUTH_GOOGLE_SECRET
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
@@ -21,7 +24,12 @@ export default function SignUpPage() {
             Free for up to 50 contacts
           </p>
         </div>
-        <SignUpForm />
+        <SignUpForm showGoogle={googleConfigured} />
+        {!googleConfigured ? (
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Local email/password signup is active until Google OAuth is configured.
+          </p>
+        ) : null}
         <p className="text-center text-sm text-muted-foreground mt-6">
           Already have an account?{" "}
           <Link href="/signin" className="text-primary hover:underline">

@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
   try {
     const { Stripe } = await import("stripe")
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2026-04-22.dahlia",
+      apiVersion: "2025-02-24.acacia",
     })
 
     const event = stripe.webhooks.constructEvent(

@@ -1,7 +1,11 @@
 import NextAuth from "next-auth"
 import Credentials from "next-auth/providers/credentials"
+import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
+
+const googleConfigured =
+  !!process.env.AUTH_GOOGLE_ID && !!process.env.AUTH_GOOGLE_SECRET
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   secret: process.env.AUTH_SECRET ?? "follow-up-tracker-default-secret-change-in-prod",
@@ -10,6 +14,14 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     signIn: "/signin",
   },
   providers: [
+    ...(googleConfigured
+      ? [
+          Google({
+            clientId: process.env.AUTH_GOOGLE_ID!,
+            clientSecret: process.env.AUTH_GOOGLE_SECRET!,
+          }),
+        ]
+      : []),
     Credentials({
       credentials: {
         email: { label: "Email", type: "email" },
@@ -24,7 +36,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           if (!user || !user.password) return null
           const valid = await bcrypt.compare(
             credentials.password as string,
-            user.password
+            user.password as string
           )
           if (!valid) return null
           return { id: user.id, email: user.email, name: user.name, image: user.image }

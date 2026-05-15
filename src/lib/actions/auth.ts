@@ -3,7 +3,6 @@
 import bcrypt from "bcryptjs"
 import { db } from "@/lib/db"
 import { signIn } from "@/auth"
-import { redirect } from "next/navigation"
 
 export async function registerUser(data: {
   name: string

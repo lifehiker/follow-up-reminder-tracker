@@ -1,96 +1,67 @@
-# Human Input Needed
+# HUMAN INPUT NEEDED
 
-The app runs fully without any of these credentials. External services degrade gracefully.
+The app runs locally without external credentials using:
 
----
+- SQLite via `DATABASE_URL="file:./dev.db"`
+- Email/password auth fallback
+- Guarded Stripe routes that return a clear configuration error
+- Guarded daily digest route that skips when Resend is unavailable
 
-## 1. Stripe (for payments)
+Provide the following only when you want the full production integrations enabled.
 
-The billing UI renders, but checkout and portal buttons return an error if Stripe is not configured.
+## 1. Core production config
 
-**What you need:**
-1. Create a [Stripe account](https://stripe.com)
-2. Create two products/prices in Stripe Dashboard:
-   - Pro Monthly: $12/month recurring
-   - Pro Yearly: $96/year recurring
-3. Set up a webhook endpoint pointing to `https://yourdomain.com/api/webhooks/stripe`
-   - Subscribe to events: `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`
+- `NEXT_PUBLIC_APP_URL`
+  Use your real public origin, for example `https://followups.example.com`.
+- `AUTH_SECRET`
+  Generate with `openssl rand -base64 32`.
 
-**Environment variables to set:**
-```bash
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_MONTHLY=price_...    # monthly price ID
-STRIPE_PRICE_YEARLY=price_...     # yearly price ID
-```
+## 2. Google OAuth
 
----
+Required to match the PRD’s Google OAuth auth path.
 
-## 2. Resend (for daily digest emails)
+- Create a Google OAuth client in Google Cloud.
+- Add the authorized redirect URI:
+  `https://your-domain.com/api/auth/callback/google`
+- Set:
+  - `AUTH_GOOGLE_ID`
+  - `AUTH_GOOGLE_SECRET`
 
-The daily digest cron job skips silently if `RESEND_API_KEY` is not set.
+Without these, the app continues to work with local email/password auth.
 
-**What you need:**
-1. Create a [Resend account](https://resend.com)
-2. Verify your sending domain
-3. Create an API key
+## 3. Stripe billing
 
-**Environment variables to set:**
-```bash
-RESEND_API_KEY=re_...
-EMAIL_FROM=noreply@yourdomain.com    # must be verified in Resend
-```
+Required for real paid upgrades and customer portal access.
 
-**Cron setup:**
-Hit `POST /api/cron/daily-digest` daily (e.g., 8am UTC) with:
-```
-Authorization: Bearer YOUR_CRON_SECRET
-```
+- Create Stripe products/prices for:
+  - monthly plan
+  - yearly plan
+- Set:
+  - `STRIPE_SECRET_KEY`
+  - `STRIPE_WEBHOOK_SECRET`
+  - `STRIPE_PRICE_MONTHLY`
+  - `STRIPE_PRICE_YEARLY`
+- Point Stripe webhooks to:
+  `https://your-domain.com/api/webhooks/stripe`
 
-Set `CRON_SECRET` to any random string to protect the endpoint.
+Without these, billing pages still render and upgrade actions fail gracefully with `503 Stripe is not configured.`
 
----
+## 4. Resend email
 
-## 3. App URL
+Required for real daily digest delivery.
 
-Set this to your deployed domain for correct redirect URLs in Stripe and email links:
+- Set:
+  - `RESEND_API_KEY`
+  - `EMAIL_FROM`
 
-```bash
-NEXT_PUBLIC_APP_URL=https://yourdomain.com
-```
+Without these, the cron endpoint returns success with `skipped: true`.
 
----
+## 5. Cron protection and scheduler
 
-## 4. Auth Secret (production)
+Recommended for production digest runs.
 
-A default secret is baked into the Docker image for zero-config startup. **Override it in production** to keep sessions secure:
-
-```bash
-AUTH_SECRET=$(openssl rand -base64 32)
-```
-
----
-
-## Summary: Minimum viable production setup
-
-```bash
-# Required for auth security (override default)
-AUTH_SECRET=<openssl rand -base64 32>
-
-# Required for billing
-STRIPE_SECRET_KEY=sk_live_...
-STRIPE_WEBHOOK_SECRET=whsec_...
-STRIPE_PRICE_MONTHLY=price_...
-STRIPE_PRICE_YEARLY=price_...
-
-# Required for email digest
-RESEND_API_KEY=re_...
-EMAIL_FROM=noreply@yourdomain.com
-CRON_SECRET=<random string>
-
-# Required for correct URLs
-NEXT_PUBLIC_APP_URL=https://yourdomain.com
-
-# Database (default is /data/app.db in Docker — SQLite, no external service needed)
-# DATABASE_URL=file:/data/app.db
-```
+- Set `CRON_SECRET`
+- Configure your scheduler to `POST`:
+  `https://your-domain.com/api/cron/daily-digest`
+- Send header:
+  `Authorization: Bearer <CRON_SECRET>`

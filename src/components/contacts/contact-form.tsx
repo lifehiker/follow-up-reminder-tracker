@@ -23,6 +23,7 @@ type Contact = {
   company: string | null
   title: string | null
   notes: string | null
+  reminderNote: string | null
   relationshipType: string
   status: string
   nextFollowUpAt: Date | null
@@ -64,6 +65,7 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
     company: contact?.company ?? "",
     title: contact?.title ?? "",
     notes: contact?.notes ?? "",
+    reminderNote: contact?.reminderNote ?? "",
     relationshipType: (contact?.relationshipType as ContactFormData["relationshipType"]) ?? "OTHER",
     status: (contact?.status as ContactFormData["status"]) ?? "LEAD",
     nextFollowUpAt: formatDateForInput(contact?.nextFollowUpAt ?? null),
@@ -193,6 +195,17 @@ export function ContactForm({ contact, onSuccess }: ContactFormProps) {
             value={formData.nextFollowUpAt ?? ""}
             onChange={(e) => set("nextFollowUpAt", e.target.value)}
             disabled={loading}
+          />
+        </div>
+        <div className="space-y-2 md:col-span-2">
+          <Label htmlFor="reminderNote">Reminder Note</Label>
+          <Input
+            id="reminderNote"
+            value={formData.reminderNote ?? ""}
+            onChange={(e) => set("reminderNote", e.target.value)}
+            disabled={loading}
+            placeholder="Example: send proposal bump on Tuesday"
+            maxLength={280}
           />
         </div>
       </div>

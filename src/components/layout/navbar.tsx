@@ -23,6 +23,9 @@ export function Navbar() {
           <Link href="/recruiters" className="text-muted-foreground hover:text-foreground transition-colors">
             Recruiters
           </Link>
+          <Link href="/personal-crm" className="text-muted-foreground hover:text-foreground transition-colors">
+            Personal CRM
+          </Link>
         </nav>
         <div className="flex items-center gap-2">
           <Link href="/signin">

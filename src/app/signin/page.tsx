@@ -7,6 +7,9 @@ export const metadata: Metadata = {
 }
 
 export default function SignInPage() {
+  const googleConfigured =
+    !!process.env.AUTH_GOOGLE_ID && !!process.env.AUTH_GOOGLE_SECRET
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50 px-4">
       <div className="w-full max-w-sm">
@@ -19,7 +22,12 @@ export default function SignInPage() {
             Sign in to your account
           </p>
         </div>
-        <SignInForm />
+        <SignInForm showGoogle={googleConfigured} />
+        {!googleConfigured ? (
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            Google sign-in can be enabled later with OAuth credentials.
+          </p>
+        ) : null}
         <p className="text-center text-sm text-muted-foreground mt-6">
           Don&apos;t have an account?{" "}
           <Link href="/signup" className="text-primary hover:underline">

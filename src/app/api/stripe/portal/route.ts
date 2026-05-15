@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { auth } from "@/auth"
 import { db } from "@/lib/db"
 
-export async function POST(_req: NextRequest) {
+export async function POST() {
   if (!process.env.STRIPE_SECRET_KEY) {
     return NextResponse.json(
       { error: "Stripe is not configured." },
@@ -29,7 +29,7 @@ export async function POST(_req: NextRequest) {
 
     const { Stripe } = await import("stripe")
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2026-04-22.dahlia",
+      apiVersion: "2025-02-24.acacia",
     })
 
     const appUrl =

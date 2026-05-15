@@ -44,7 +44,8 @@ export default async function WaitingPage({ searchParams }: WaitingPageProps) {
 
   const params = await searchParams
   const daysFilter = parseInt(params.days ?? "0")
-  const cutoffDate = daysFilter > 0 ? subDays(new Date(), daysFilter) : null
+  const now = new Date()
+  const cutoffDate = daysFilter > 0 ? subDays(now, daysFilter) : null
 
   // Find contacts where the latest interaction is OUTBOUND
   // and there's no INBOUND interaction after it
@@ -57,7 +58,6 @@ export default async function WaitingPage({ searchParams }: WaitingPageProps) {
     include: {
       interactions: {
         orderBy: { happenedAt: "desc" },
-        take: 5,
       },
     },
   })
@@ -69,13 +69,13 @@ export default async function WaitingPage({ searchParams }: WaitingPageProps) {
     const latestOutbound = interactions.find((i) => i.direction === "OUTBOUND")
     if (!latestOutbound) return false
 
-    const latestInbound = interactions.find((i) => i.direction === "INBOUND")
+    const latestInbound = interactions.find(
+      (i) =>
+        i.direction === "INBOUND" &&
+        new Date(i.happenedAt) > new Date(latestOutbound.happenedAt)
+    )
 
-    // If there's an inbound after the outbound, not waiting
-    if (
-      latestInbound &&
-      new Date(latestInbound.happenedAt) > new Date(latestOutbound.happenedAt)
-    ) {
+    if (latestInbound) {
       return false
     }
 
@@ -137,7 +137,7 @@ export default async function WaitingPage({ searchParams }: WaitingPageProps) {
             )
             const daysSinceOutbound = latestOutbound
               ? Math.floor(
-                  (Date.now() -
+                  (now.getTime() -
                     new Date(latestOutbound.happenedAt).getTime()) /
                     (1000 * 60 * 60 * 24)
                 )

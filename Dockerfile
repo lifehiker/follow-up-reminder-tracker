@@ -25,20 +25,18 @@ ENV NODE_ENV=production
 ENV DATABASE_URL="file:/data/app.db"
 ENV AUTH_SECRET="forge-app-default-secret-override-in-production"
 ENV NEXT_PUBLIC_APP_URL=""
-
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 RUN mkdir -p /data && chown nextjs:nodejs /data
-
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 COPY --from=builder --chown=nextjs:nodejs /app/prisma ./prisma
-COPY --from=builder --chown=nextjs:nodejs /app/prisma.config.ts ./prisma.config.ts
-# Copy full node_modules so the Prisma CLI has all its runtime deps
+# Copy full node_modules so the Prisma CLI has all its runtime deps (v6+ requires effect, c12, etc.)
 COPY --from=builder --chown=nextjs:nodejs /app/node_modules ./node_modules
-
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
-CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate && echo 'DB schema initialized' && node server.js"]
+# Bind Next.js to all interfaces — see HOSTNAME comment in the simple template above.
+ENV HOSTNAME=0.0.0.0
+CMD ["sh", "-c", "node node_modules/prisma/build/index.js db push --skip-generate && echo 'DB schema initialized' && HOSTNAME=0.0.0.0 exec node server.js"]

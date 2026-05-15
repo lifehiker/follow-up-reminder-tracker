@@ -4,7 +4,6 @@ import { db } from "@/lib/db"
 import { format } from "date-fns"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Separator } from "@/components/ui/separator"
 import { ContactForm } from "@/components/contacts/contact-form"
 import { InteractionTimeline } from "@/components/interactions/interaction-timeline"
 import { AddInteractionDialog } from "@/components/interactions/add-interaction-dialog"
@@ -96,17 +95,23 @@ export default async function ContactDetailPage({ params }: ContactDetailPagePro
           </span>
         )}
         {contact.nextFollowUpAt && (
-          <span
-            className={`flex items-center gap-1.5 ${
+          <div
+            className={`flex items-start gap-1.5 ${
               new Date(contact.nextFollowUpAt) < new Date()
                 ? "text-destructive"
                 : "text-muted-foreground"
             }`}
           >
-            <Calendar className="w-4 h-4" />
-            Follow-up:{" "}
-            {format(new Date(contact.nextFollowUpAt), "MMM d, yyyy")}
-          </span>
+            <Calendar className="w-4 h-4 mt-0.5" />
+            <div>
+              <div>
+                Follow-up: {format(new Date(contact.nextFollowUpAt), "MMM d, yyyy")}
+              </div>
+              {contact.reminderNote && (
+                <div className="text-xs opacity-80">{contact.reminderNote}</div>
+              )}
+            </div>
+          </div>
         )}
       </div>
 

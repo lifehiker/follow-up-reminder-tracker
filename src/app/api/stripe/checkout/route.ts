@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     const { plan } = await req.json()
     const { Stripe } = await import("stripe")
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2026-04-22.dahlia",
+      apiVersion: "2025-02-24.acacia",
     })
 
     const appUrl =
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Get or create stripe customer
-    let sub = await db.subscription.findUnique({
+    const sub = await db.subscription.findUnique({
       where: { userId: session.user.id },
     })
 

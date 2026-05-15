@@ -42,7 +42,8 @@ export function ContactFilters() {
   const hasFilters =
     searchParams.has("search") ||
     searchParams.has("status") ||
-    searchParams.has("type")
+    searchParams.has("type") ||
+    searchParams.has("due")
 
   return (
     <div className="flex flex-wrap gap-3 items-center">
@@ -91,6 +92,22 @@ export function ContactFilters() {
           <SelectItem value="NETWORK">Network</SelectItem>
           <SelectItem value="PERSONAL">Personal</SelectItem>
           <SelectItem value="OTHER">Other</SelectItem>
+        </SelectContent>
+      </Select>
+
+      <Select
+        value={searchParams.get("due") ?? "ALL"}
+        onValueChange={(v) => updateFilter("due", v ?? "ALL")}
+      >
+        <SelectTrigger className="w-40">
+          <SelectValue placeholder="Due state" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="ALL">All due states</SelectItem>
+          <SelectItem value="OVERDUE">Overdue</SelectItem>
+          <SelectItem value="TODAY">Due today</SelectItem>
+          <SelectItem value="THIS_WEEK">This week</SelectItem>
+          <SelectItem value="UNSCHEDULED">Unscheduled</SelectItem>
         </SelectContent>
       </Select>
 

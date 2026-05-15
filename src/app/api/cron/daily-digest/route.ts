@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
 
     // Get users with digest enabled
     const users = await db.user.findMany({
-      where: { digestEnabled: true, email: { not: undefined } },
+      where: { digestEnabled: true },
     })
 
     let sent = 0
@@ -57,6 +57,12 @@ export async function POST(req: NextRequest) {
         )
 
         const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000"
+        const formattedDate = new Intl.DateTimeFormat("en-US", {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+          timeZone: user.timezone || "UTC",
+        }).format(new Date())
 
         const html = `
 <!DOCTYPE html>
@@ -72,7 +78,7 @@ h2 { font-size: 15px; margin: 20px 0 8px; }
 .btn { display: inline-block; background: #111; color: #fff; padding: 10px 20px; border-radius: 6px; text-decoration: none; margin-top: 20px; }
 </style></head>
 <body>
-<h1>Follow-up digest for ${new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}</h1>
+<h1>Follow-up digest for ${formattedDate}</h1>
 <p style="color:#6b7280">Hi ${user.name ?? "there"}, here are your follow-ups for today.</p>
 
 ${

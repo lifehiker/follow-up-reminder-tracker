@@ -33,6 +33,7 @@ export function QuickAddDialog() {
     company: "",
     relationshipType: "OTHER" as const,
     nextFollowUpAt: "",
+    reminderNote: "",
   })
 
   function set<K extends keyof typeof form>(key: K, value: (typeof form)[K]) {
@@ -49,6 +50,7 @@ export function QuickAddDialog() {
         company: form.company,
         title: "",
         notes: "",
+        reminderNote: form.reminderNote,
         relationshipType: form.relationshipType,
         status: "LEAD",
         nextFollowUpAt: form.nextFollowUpAt || null,
@@ -59,7 +61,14 @@ export function QuickAddDialog() {
       }
       toast.success("Contact added!")
       setOpen(false)
-      setForm({ name: "", email: "", company: "", relationshipType: "OTHER", nextFollowUpAt: "" })
+      setForm({
+        name: "",
+        email: "",
+        company: "",
+        relationshipType: "OTHER",
+        nextFollowUpAt: "",
+        reminderNote: "",
+      })
       router.refresh()
     } finally {
       setLoading(false)
@@ -140,6 +149,17 @@ export function QuickAddDialog() {
               value={form.nextFollowUpAt}
               onChange={(e) => set("nextFollowUpAt", e.target.value)}
               disabled={loading}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="qa-reminder-note">Reminder Note</Label>
+            <Input
+              id="qa-reminder-note"
+              value={form.reminderNote}
+              onChange={(e) => set("reminderNote", e.target.value)}
+              disabled={loading}
+              placeholder="Example: check in after interview"
+              maxLength={280}
             />
           </div>
           <div className="flex gap-2">

@@ -25,6 +25,7 @@ type Contact = {
   status: string
   relationshipType: string
   nextFollowUpAt: Date | null
+  reminderNote: string | null
   updatedAt: Date
   interactions: { happenedAt: Date }[]
 }
@@ -109,15 +110,22 @@ export function ContactTable({ contacts }: ContactTableProps) {
             </TableCell>
             <TableCell className="text-sm">
               {c.nextFollowUpAt ? (
-                <span
-                  className={
-                    new Date(c.nextFollowUpAt) < new Date()
-                      ? "text-destructive font-medium"
-                      : ""
-                  }
-                >
-                  {format(new Date(c.nextFollowUpAt), "MMM d, yyyy")}
-                </span>
+                <div>
+                  <span
+                    className={
+                      new Date(c.nextFollowUpAt) < new Date()
+                        ? "text-destructive font-medium"
+                        : ""
+                    }
+                  >
+                    {format(new Date(c.nextFollowUpAt), "MMM d, yyyy")}
+                  </span>
+                  {c.reminderNote && (
+                    <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
+                      {c.reminderNote}
+                    </p>
+                  )}
+                </div>
               ) : (
                 <span className="text-muted-foreground">-</span>
               )}

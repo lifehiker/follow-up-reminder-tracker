@@ -16,6 +16,8 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li><Link href="/pricing" className="hover:text-foreground">Pricing</Link></li>
               <li><Link href="/signup" className="hover:text-foreground">Get Started</Link></li>
+              <li><Link href="/personal-crm" className="hover:text-foreground">Personal CRM</Link></li>
+              <li><Link href="/keep-in-touch" className="hover:text-foreground">Keep in Touch</Link></li>
             </ul>
           </div>
           <div>
@@ -24,13 +26,15 @@ export function Footer() {
               <li><Link href="/freelancers" className="hover:text-foreground">Freelancers</Link></li>
               <li><Link href="/job-seekers" className="hover:text-foreground">Job Seekers</Link></li>
               <li><Link href="/recruiters" className="hover:text-foreground">Recruiters</Link></li>
+              <li><Link href="/compare/clay-alternative" className="hover:text-foreground">Clay Alternative</Link></li>
             </ul>
           </div>
           <div>
-            <div className="font-semibold text-sm mb-3">Account</div>
+            <div className="font-semibold text-sm mb-3">Resources</div>
             <ul className="space-y-2 text-sm text-muted-foreground">
+              <li><Link href="/blog/best-follow-up-tracker-for-freelancers" className="hover:text-foreground">Freelancer Guide</Link></li>
+              <li><Link href="/blog/job-application-follow-up-tracker" className="hover:text-foreground">Job Search Guide</Link></li>
               <li><Link href="/signin" className="hover:text-foreground">Sign In</Link></li>
-              <li><Link href="/signup" className="hover:text-foreground">Sign Up</Link></li>
             </ul>
           </div>
         </div>

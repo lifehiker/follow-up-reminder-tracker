@@ -8,8 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent } from "@/components/ui/card"
 import { toast } from "sonner"
+import { Separator } from "@/components/ui/separator"
+import { AuthProviderButton } from "@/components/auth/auth-provider-button"
 
-export function SignInForm() {
+export function SignInForm({ showGoogle }: { showGoogle?: boolean }) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [email, setEmail] = useState("")
@@ -40,6 +42,18 @@ export function SignInForm() {
   return (
     <Card>
       <CardContent className="pt-6">
+        <div className="space-y-4">
+          {showGoogle ? (
+            <>
+              <AuthProviderButton />
+              <div className="relative">
+                <Separator />
+                <span className="absolute inset-x-0 -top-2 mx-auto w-fit bg-card px-2 text-xs text-muted-foreground">
+                  or use email
+                </span>
+              </div>
+            </>
+          ) : null}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="email">Email</Label>
@@ -69,6 +83,7 @@ export function SignInForm() {
             {loading ? "Signing in..." : "Sign in"}
           </Button>
         </form>
+        </div>
       </CardContent>
     </Card>
   )

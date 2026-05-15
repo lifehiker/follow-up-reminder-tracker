@@ -12,6 +12,7 @@ const contactSchema = z.object({
   company: z.string().optional(),
   title: z.string().optional(),
   notes: z.string().optional(),
+  reminderNote: z.string().max(280, "Reminder note must be 280 characters or less").optional(),
   relationshipType: z
     .enum(["CLIENT", "LEAD", "CANDIDATE", "NETWORK", "PERSONAL", "OTHER"])
     .default("OTHER"),
@@ -48,6 +49,7 @@ export async function createContact(data: ContactFormData) {
       company: parsed.data.company || null,
       title: parsed.data.title || null,
       notes: parsed.data.notes || null,
+      reminderNote: parsed.data.reminderNote || null,
       relationshipType: parsed.data.relationshipType,
       status: parsed.data.status,
       nextFollowUpAt: parsed.data.nextFollowUpAt
@@ -83,6 +85,7 @@ export async function updateContact(id: string, data: ContactFormData) {
       company: parsed.data.company || null,
       title: parsed.data.title || null,
       notes: parsed.data.notes || null,
+      reminderNote: parsed.data.reminderNote || null,
       relationshipType: parsed.data.relationshipType,
       status: parsed.data.status,
       nextFollowUpAt: parsed.data.nextFollowUpAt
@@ -155,6 +158,7 @@ export async function getContacts(filters?: {
   search?: string
   status?: string
   relationshipType?: string
+  due?: string
   includeArchived?: boolean
 }) {
   const session = await auth()
@@ -180,6 +184,29 @@ export async function getContacts(filters?: {
       { email: { contains: filters.search } },
       { company: { contains: filters.search } },
     ]
+  }
+
+  if (filters?.due && filters.due !== "ALL") {
+    const now = new Date()
+    const todayStart = new Date(now)
+    todayStart.setHours(0, 0, 0, 0)
+    const todayEnd = new Date(now)
+    todayEnd.setHours(23, 59, 59, 999)
+    const weekEnd = new Date(todayEnd)
+    weekEnd.setDate(weekEnd.getDate() + 7)
+
+    if (filters.due === "OVERDUE") {
+      where.nextFollowUpAt = { lt: todayStart }
+    }
+    if (filters.due === "TODAY") {
+      where.nextFollowUpAt = { gte: todayStart, lte: todayEnd }
+    }
+    if (filters.due === "THIS_WEEK") {
+      where.nextFollowUpAt = { gt: todayEnd, lte: weekEnd }
+    }
+    if (filters.due === "UNSCHEDULED") {
+      where.nextFollowUpAt = null
+    }
   }
 
   return db.contact.findMany({
