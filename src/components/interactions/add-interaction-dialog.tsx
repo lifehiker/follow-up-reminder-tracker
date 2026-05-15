@@ -86,13 +86,13 @@ export function AddInteractionDialog({
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Type</Label>
+              <Label htmlFor="interaction-type">Type</Label>
               <Select
                 value={form.type}
                 onValueChange={(v) => set("type", v as typeof form.type)}
                 disabled={loading}
               >
-                <SelectTrigger>
+                <SelectTrigger id="interaction-type">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -105,7 +105,7 @@ export function AddInteractionDialog({
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Direction</Label>
+              <Label htmlFor="interaction-direction">Direction</Label>
               <Select
                 value={form.direction}
                 onValueChange={(v) =>
@@ -113,7 +113,7 @@ export function AddInteractionDialog({
                 }
                 disabled={loading}
               >
-                <SelectTrigger>
+                <SelectTrigger id="interaction-direction">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -126,8 +126,9 @@ export function AddInteractionDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Date</Label>
+            <Label htmlFor="interaction-date">Date</Label>
             <Input
+              id="interaction-date"
               type="date"
               value={form.happenedAt}
               onChange={(e) => set("happenedAt", e.target.value)}
@@ -136,8 +137,9 @@ export function AddInteractionDialog({
           </div>
 
           <div className="space-y-2">
-            <Label>Summary *</Label>
+            <Label htmlFor="interaction-summary">Summary *</Label>
             <Textarea
+              id="interaction-summary"
               value={form.summary}
               onChange={(e) => set("summary", e.target.value)}
               required

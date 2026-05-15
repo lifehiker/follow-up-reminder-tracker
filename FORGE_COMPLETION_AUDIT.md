@@ -27,6 +27,8 @@ This audit maps the major PRD requirements to concrete implementation points in 
 
 - Auth.js / NextAuth configuration:
   [src/auth.ts](/opt/forge-builds/follow-up-reminder-tracker/src/auth.ts:1)
+- OAuth and credentials sessions are reconciled to persisted local users before protected app data is accessed:
+  [src/auth.ts](/opt/forge-builds/follow-up-reminder-tracker/src/auth.ts:43)
 - Credentials fallback registration and login:
   [src/lib/actions/auth.ts](/opt/forge-builds/follow-up-reminder-tracker/src/lib/actions/auth.ts:1),
   [src/app/api/auth/register/route.ts](/opt/forge-builds/follow-up-reminder-tracker/src/app/api/auth/register/route.ts:1)
@@ -82,6 +84,9 @@ This audit maps the major PRD requirements to concrete implementation points in 
   [src/components/interactions/interaction-timeline.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/interactions/interaction-timeline.tsx:1),
   [src/components/interactions/add-interaction-dialog.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/interactions/add-interaction-dialog.tsx:1),
   [src/components/interactions/quick-interaction-dialog.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/interactions/quick-interaction-dialog.tsx:1)
+- Interaction dialog controls have explicit label bindings for accessible and reliable form use:
+  [src/components/interactions/add-interaction-dialog.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/interactions/add-interaction-dialog.tsx:85),
+  [src/components/interactions/quick-interaction-dialog.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/interactions/quick-interaction-dialog.tsx:72)
 
 ## Billing and monetization
 
@@ -100,7 +105,7 @@ This audit maps the major PRD requirements to concrete implementation points in 
 
 - Daily digest cron endpoint with lazy Resend init and safe skip:
   [src/app/api/cron/daily-digest/route.ts](/opt/forge-builds/follow-up-reminder-tracker/src/app/api/cron/daily-digest/route.ts:1)
-- CSV export with Pro gating and reminder note column:
+- CSV export with Pro gating, reminder note column, and quote escaping for every field:
   [src/app/api/export/contacts/route.ts](/opt/forge-builds/follow-up-reminder-tracker/src/app/api/export/contacts/route.ts:1)
 
 ## Settings
@@ -110,6 +115,8 @@ This audit maps the major PRD requirements to concrete implementation points in 
   [src/lib/actions/settings.ts](/opt/forge-builds/follow-up-reminder-tracker/src/lib/actions/settings.ts:1)
 - Settings form:
   [src/components/settings/settings-form.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/settings/settings-form.tsx:1)
+- Settings form controls have explicit label bindings:
+  [src/components/settings/settings-form.tsx](/opt/forge-builds/follow-up-reminder-tracker/src/components/settings/settings-form.tsx:68)
 
 ## Marketing and SEO
 
@@ -149,9 +156,9 @@ This audit maps the major PRD requirements to concrete implementation points in 
 ## Verification completed
 
 - `npm install` completed successfully in this workspace.
-- `npm run lint` passes.
-- `npm run build` passes on `next@15.5.18`.
-- `npm run dev` starts successfully after disabling the unstable segment explorer devtool path in:
+- `npm run lint` passes after the final auth/export/accessibility fixes.
+- `npm run build` passes on `next@15.5.18` after the final fixes.
+- `npm run dev -- --hostname 127.0.0.1 --port 3001` starts successfully after disabling the unstable segment explorer devtool path in:
   [next.config.ts](/opt/forge-builds/follow-up-reminder-tracker/next.config.ts:1)
 - Smoke-tested public routes:
   `/`, `/pricing`, `/signin`, `/robots.txt`, `/sitemap.xml`
@@ -162,7 +169,10 @@ This audit maps the major PRD requirements to concrete implementation points in 
 - Browser-driven interaction checks completed:
   - sign in with credentials
   - quick-add contact creation through the dashboard dialog
+  - contact detail navigation
+  - interaction logging through the contact timeline dialog
   - settings save flow
+  - billing page render
   - waiting page Pro upgrade state
 - Smoke-tested auth and fallback APIs:
   - registration route returns success

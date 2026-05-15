@@ -30,6 +30,7 @@ This checklist is ordered by implementation dependency: foundation -> data/auth 
 - [x] Protected app routes redirect unauthenticated users
 - [x] Credentials-based local fallback auth works without external credentials
 - [x] Google OAuth path exists and is only shown when env is configured
+- [x] OAuth and credentials sessions resolve to a persisted local `User` row for protected app data ownership
 - [x] Verify end-to-end signup/signin/signout flows in the running app
 - [x] Re-check PRD auth copy and polish on auth pages after runtime testing
 
@@ -75,6 +76,7 @@ This checklist is ordered by implementation dependency: foundation -> data/auth 
 - [x] Reminder date display
 - [x] Reminder note display
 - [x] Add interaction from contact page
+- [x] Interaction dialog labels are bound to controls for keyboard, screen-reader, and automated form usage
 - [x] Verify timeline clarity, sorting, and edit/add flows in-browser
 
 ## 8. Interaction Log
@@ -120,6 +122,7 @@ This checklist is ordered by implementation dependency: foundation -> data/auth 
 - [x] Profile settings
 - [x] Email digest toggle
 - [x] Time zone setting
+- [x] Settings form labels are bound to controls
 - [x] Billing access path from app navigation/settings flow
 - [x] Verify settings save flow in-browser
 
@@ -135,6 +138,7 @@ This checklist is ordered by implementation dependency: foundation -> data/auth 
 
 - [x] CSV export route exists
 - [x] CSV includes key contact/reminder fields
+- [x] CSV escaping handles quotes in every exported field
 - [x] Local SQLite/libSQL-compatible storage path exists
 - [x] Verify CSV export response and escaping
 
@@ -183,15 +187,15 @@ This checklist is ordered by implementation dependency: foundation -> data/auth 
 ## Final verification notes
 
 - `npm install` completed successfully and restored the missing local dependency tree.
-- `npm run lint` passes.
-- `npm run build` passes on `next@15.5.18`.
-- `npm run dev` starts successfully in this environment.
+- `npm run lint` passes after the final auth/export/accessibility fixes.
+- `npm run build` passes on `next@15.5.18` after the final fixes.
+- `npm run dev -- --hostname 127.0.0.1 --port 3001` starts successfully in this environment; port 3000 was already occupied.
 - Public routes smoke-tested: `/`, `/pricing`, `/signin`, `robots.txt`, and `sitemap.xml`.
 - Auth smoke-tested with a real local registration plus credentials sign-in flow for `smoke-1778845689@example.com`.
 - Protected routes smoke-tested with an authenticated cookie-backed session: `/app`, `/app/contacts`, `/app/contacts/[id]`, `/app/settings`, and `/app/waiting`.
 - Data-backed UI smoke-tested with seeded overdue, due-today, and upcoming contacts plus interaction history.
 - Browser screenshots captured and reviewed for `/`, `/pricing`, `/signin`, `/app`, `/app/contacts`, `/app/contacts/[id]`, and `/app/settings`.
-- Browser-driven interaction QA completed with Playwright: credentials sign-in, quick-add contact creation, settings save, and waiting-page upgrade state.
+- Browser-driven interaction QA completed with Playwright: credentials sign-in, quick-add contact creation, contact detail navigation, interaction logging, settings save, billing page, and waiting-page upgrade state.
 - Fallback API behavior verified:
   `GET /api/export/contacts` returns `403` for free users,
   `POST /api/stripe/checkout` returns `503` when Stripe is not configured,

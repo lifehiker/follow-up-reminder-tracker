@@ -83,7 +83,7 @@ export function SettingsForm({ defaultValues }: SettingsFormProps) {
       <div className="space-y-2">
         <Label htmlFor="timezone">Timezone</Label>
         <Select value={timezone} onValueChange={(v) => setTimezone(v ?? "UTC")} disabled={loading}>
-          <SelectTrigger>
+          <SelectTrigger id="timezone">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>

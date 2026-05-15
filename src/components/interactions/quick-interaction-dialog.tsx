@@ -71,13 +71,13 @@ export function QuickInteractionDialog({
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4 mt-2">
           <div className="space-y-2">
-            <Label>Direction</Label>
+            <Label htmlFor={`quick-direction-${contactId}`}>Direction</Label>
             <Select
               value={direction}
               onValueChange={(v) => setDirection(v as typeof direction)}
               disabled={loading}
             >
-              <SelectTrigger>
+              <SelectTrigger id={`quick-direction-${contactId}`}>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -88,8 +88,9 @@ export function QuickInteractionDialog({
             </Select>
           </div>
           <div className="space-y-2">
-            <Label>Summary *</Label>
+            <Label htmlFor={`quick-summary-${contactId}`}>Summary *</Label>
             <Textarea
+              id={`quick-summary-${contactId}`}
               value={summary}
               onChange={(e) => setSummary(e.target.value)}
               required

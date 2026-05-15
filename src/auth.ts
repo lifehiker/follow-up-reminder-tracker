@@ -47,8 +47,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    jwt({ token, user }) {
-      if (user) token.id = user.id
+    async jwt({ token, user }) {
+      if (user?.id && token.email) {
+        const dbUser = await db.user.upsert({
+          where: { email: token.email },
+          create: {
+            email: token.email,
+            name: user.name ?? token.name,
+            image: user.image ?? token.picture,
+          },
+          update: {
+            name: user.name ?? token.name,
+            image: user.image ?? token.picture,
+          },
+        })
+        token.id = dbUser.id
+      } else if (user?.id) {
+        token.id = user.id
+      }
       return token
     },
     session({ session, token }) {

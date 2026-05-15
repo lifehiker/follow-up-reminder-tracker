@@ -4,6 +4,10 @@ import { isPro } from "@/lib/billing"
 import { db } from "@/lib/db"
 import { format } from "date-fns"
 
+function csvCell(value: string) {
+  return `"${value.replace(/"/g, '""')}"`
+}
+
 export async function GET() {
   const session = await auth()
   if (!session?.user?.id) {
@@ -51,16 +55,16 @@ export async function GET() {
     c.status,
     c.relationshipType,
     c.nextFollowUpAt ? format(new Date(c.nextFollowUpAt), "yyyy-MM-dd") : "",
-    (c.reminderNote ?? "").replace(/"/g, '""'),
+    c.reminderNote ?? "",
     c.interactions[0]
       ? format(new Date(c.interactions[0].happenedAt), "yyyy-MM-dd")
       : "",
-    (c.notes ?? "").replace(/"/g, '""'),
+    c.notes ?? "",
     format(new Date(c.createdAt), "yyyy-MM-dd"),
   ])
 
   const csv = [headers, ...rows]
-    .map((row) => row.map((cell) => `"${cell}"`).join(","))
+    .map((row) => row.map((cell) => csvCell(cell)).join(","))
     .join("\n")
 
   return new NextResponse(csv, {
