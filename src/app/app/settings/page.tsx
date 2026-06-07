@@ -12,7 +12,22 @@ export default async function SettingsPage() {
     where: { id: session.user.id },
   })
 
-  if (!user) redirect("/signin")
+  if (!user) {
+    // User record missing (stale JWT after DB reset) — avoid redirect() during streaming
+    // which leaves the page body empty on mobile. Show a sign-in prompt instead.
+    return (
+      <div className="max-w-lg space-y-6">
+        <h1 className="text-2xl font-bold">Settings</h1>
+        <p className="text-sm text-muted-foreground">
+          Your session has expired.{" "}
+          <a href="/signin" className="underline text-primary">
+            Sign in again
+          </a>{" "}
+          to continue.
+        </p>
+      </div>
+    )
+  }
 
   return (
     <div className="max-w-lg space-y-6">
