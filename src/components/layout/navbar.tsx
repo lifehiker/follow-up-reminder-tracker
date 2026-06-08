@@ -1,7 +1,6 @@
-"use client"
-
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 
 export function Navbar() {
   return (
@@ -28,11 +27,11 @@ export function Navbar() {
           </Link>
         </nav>
         <div className="flex items-center gap-2">
-          <Link href="/signin">
-            <Button variant="ghost" size="sm">Sign in</Button>
+          <Link href="/signin" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
+            Sign in
           </Link>
-          <Link href="/signup">
-            <Button size="sm">Get started free</Button>
+          <Link href="/signup" className={cn(buttonVariants({ size: "sm" }))}>
+            Get started free
           </Link>
         </div>
       </div>
