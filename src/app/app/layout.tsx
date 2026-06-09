@@ -1,5 +1,4 @@
 import { auth } from "@/auth"
-import { redirect } from "next/navigation"
 import { Sidebar } from "@/components/layout/sidebar"
 import { SessionProvider } from "next-auth/react"
 
@@ -10,7 +9,20 @@ export default async function AppLayout({
 }) {
   const session = await auth()
   if (!session?.user?.id) {
-    redirect("/signin")
+    // Avoid redirect() during streaming which sends 200 with empty body on mobile.
+    // Middleware already guards /app/* for unauthenticated users; this handles
+    // the edge case where the JWT passes middleware but session.user.id is missing.
+    return (
+      <div className="flex h-screen items-center justify-center bg-slate-50">
+        <p className="text-sm text-muted-foreground">
+          Please{" "}
+          <a href="/signin" className="underline text-primary">
+            sign in
+          </a>{" "}
+          to continue.
+        </p>
+      </div>
+    )
   }
 
   return (
