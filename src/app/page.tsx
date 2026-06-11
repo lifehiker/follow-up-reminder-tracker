@@ -2,7 +2,8 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { Navbar } from "@/components/layout/navbar"
 import { Footer } from "@/components/layout/footer"
-import { Button } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
+import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import {
@@ -102,15 +103,11 @@ export default function HomePage() {
             CRM.
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link href="/signup">
-              <Button size="lg" className="w-full sm:w-auto">
-                Get started free
-              </Button>
+            <Link href="/signup" className={cn(buttonVariants({ size: "lg" }), "w-full sm:w-auto")}>
+              Get started free
             </Link>
-            <Link href="/pricing">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto">
-                See pricing
-              </Button>
+            <Link href="/pricing" className={cn(buttonVariants({ size: "lg", variant: "outline" }), "w-full sm:w-auto")}>
+              See pricing
             </Link>
           </div>
           <p className="text-sm text-muted-foreground mt-4">
@@ -265,10 +262,8 @@ export default function HomePage() {
             Free for up to 50 contacts. Upgrade to Pro for unlimited contacts,
             interactions, and CSV export.
           </p>
-          <Link href="/signup">
-            <Button size="lg" variant="secondary">
-              Get started free
-            </Button>
+          <Link href="/signup" className={cn(buttonVariants({ size: "lg", variant: "secondary" }))}>
+            Get started free
           </Link>
         </div>
       </section>
