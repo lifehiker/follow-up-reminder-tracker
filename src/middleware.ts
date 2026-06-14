@@ -1,23 +1,15 @@
-import { NextRequest, NextResponse } from "next/server"
-import { getToken } from "next-auth/jwt"
+import { NextResponse } from "next/server"
+import { auth } from "@/auth"
 
-export default async function proxy(req: NextRequest) {
+export default auth(function middleware(req) {
   const isAppPath = req.nextUrl.pathname.startsWith("/app")
 
-  if (isAppPath) {
-    const token = await getToken({
-      req,
-      secret:
-        process.env.AUTH_SECRET ??
-        "follow-up-tracker-default-secret-change-in-prod",
-    })
-    if (!token) {
-      return NextResponse.redirect(new URL("/signin", req.url))
-    }
+  if (isAppPath && !req.auth) {
+    return NextResponse.redirect(new URL("/signin", req.url))
   }
 
   return NextResponse.next()
-}
+})
 
 export const config = {
   matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
