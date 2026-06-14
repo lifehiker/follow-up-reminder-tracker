@@ -1,5 +1,4 @@
 import { auth } from "@/auth"
-import { redirect } from "next/navigation"
 import { db } from "@/lib/db"
 import { QuickAddDialog } from "@/components/contacts/quick-add-dialog"
 import { ContactTable } from "@/components/contacts/contact-table"
@@ -20,7 +19,19 @@ interface ContactsPageProps {
 
 export default async function ContactsPage({ searchParams }: ContactsPageProps) {
   const session = await auth()
-  if (!session?.user?.id) redirect("/signin")
+  if (!session?.user?.id) {
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <p className="text-sm text-muted-foreground">
+          Please{" "}
+          <a href="/signin" className="underline text-primary">
+            sign in
+          </a>{" "}
+          to continue.
+        </p>
+      </div>
+    )
+  }
 
   const params = await searchParams
   const { search, status, type, due, archived } = params
