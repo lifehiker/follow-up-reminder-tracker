@@ -1,4 +1,5 @@
 import NextAuth from "next-auth"
+import authConfig from "@/auth.config"
 import Credentials from "next-auth/providers/credentials"
 import Google from "next-auth/providers/google"
 import bcrypt from "bcryptjs"
@@ -8,11 +9,7 @@ const googleConfigured =
   !!process.env.AUTH_GOOGLE_ID && !!process.env.AUTH_GOOGLE_SECRET
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  secret: process.env.AUTH_SECRET ?? "follow-up-tracker-default-secret-change-in-prod",
-  session: { strategy: "jwt" },
-  pages: {
-    signIn: "/signin",
-  },
+  ...authConfig,
   providers: [
     ...(googleConfigured
       ? [
